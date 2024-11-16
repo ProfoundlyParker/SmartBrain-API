@@ -31,7 +31,7 @@ const handleApiCall = (req, res) => {
   
       
 // Increases entry count with each photo submission
-    const image = (req, res, db) => {
+const image = (req, res, db) => {
     const { id } = req.body;
     db('users').where('id', '=', id)
     .increment('entries', 1)
