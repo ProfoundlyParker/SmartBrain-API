@@ -1,6 +1,6 @@
-const clarifai = require('clarifai');
+import 'clarifai';
  
-const handleApiCall = (req, res) => {
+export const handleApiCall = (req, res) => {
     const raw = JSON.stringify({
         "user_app_id": {
           "user_id": 'profoundlyparker',
@@ -31,7 +31,7 @@ const handleApiCall = (req, res) => {
   
       
 // Increases entry count with each photo submission
-const image = (req, res, db) => {
+export const image = (req, res, db) => {
     const { id } = req.body;
     db('users').where('id', '=', id)
     .increment('entries', 1)
@@ -40,9 +40,4 @@ const image = (req, res, db) => {
         res.json(entries[0].entries);
     })
     .catch(err => res.status(400).json('unable to get entries'));
-}
-
-module.exports = {
-  image,
-  handleApiCall
 }
