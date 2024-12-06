@@ -12,7 +12,10 @@ import { requireAuth } from './controllers/authorization.js';
 const db = knex({
     client: 'pg',
     connection: {
-      connectionString: process.env.DATABASE_URL
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      }
     }
   });
 
@@ -42,8 +45,8 @@ app.post('/imageurl', requireAuth, (req, res) => { handleApiCall(req, res)});
 
 // Server port running
 app.listen(process.env.PORT || 3001, '0.0.0.0', () => {
-    console.log('app is running on port `${process.env.PORT} ` or 3001');
-})
+    console.log(`App is running on port '${process.env.PORT}' || 3001`);
+});
 
 
 /*
