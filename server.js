@@ -1,27 +1,19 @@
 import express  from 'express';
-// import bodyParser from 'body-parser';
 import * as bcrypt from 'bcrypt-nodejs';
 import cors from 'cors';
 import knex from 'knex';
 import register from './controllers/register.js';
-import { handleSignin, signinAuthentication } from './controllers/signin.js';
+import { signinAuthentication } from './controllers/signin.js';
 import { handleProfileGet, handleProfileUpdate } from './controllers/profile.js';
-import pkg from './controllers/image.cjs';
-
-const { image, handleApiCall } = pkg;
+import { image, handleApiCall } from './controllers/image.js';
+import { requireAuth } from './controllers/authorization.js';
 
 // DB Connection
 const db = knex({
     client: 'pg',
-    // connection: {
-    //   connectionString: process.env.DATABASE_URL
-    // }
-    connection: process.env.DATABASE_URL || {
-      host: 'localhost',
-      user: 'postgres',
-      password: 'test',
-      database: 'smart-brain'
-  }
+    connection: {
+      connectionString: process.env.DATABASE_URL
+    }
   });
 
 
@@ -32,21 +24,21 @@ app.use(cors());
 
 app.get('/', (req, res) => { res.send('It is working!')});
 
-// Check sign in function w/ DB
+// Check sign in function w/ DB + give them a token
 app.post('/signin', signinAuthentication(db, bcrypt));
 
-// Register user to DB
+// Register user to DB + give them a token
 app.post('/register', (req, res) => { register(req, res, db, bcrypt)});
 
-// Selecting user entry count
-app.get('/profile/:id', (req, res) => { handleProfileGet(req, res, db)});
-app.post('/profile/:id', (req, res) => { handleProfileUpdate(req, res, db)});
+// Getting user profile information
+app.get('/profile/:id', requireAuth, (req, res) => { handleProfileGet(req, res, db)});
+app.post('/profile/:id', requireAuth, (req, res) => { handleProfileUpdate(req, res, db)});
 
 // Increments entry count with each image send
-app.put('/image', (req, res) => { image(req, res, db)});
+app.put('/image', requireAuth, (req, res) => { image(req, res, db)});
 
 // Clarifai API
-app.post('/imageurl', (req, res) => { handleApiCall(req, res)});
+app.post('/imageurl', requireAuth, (req, res) => { handleApiCall(req, res)});
 
 // Server port running
 app.listen(process.env.PORT || 3001, () => {

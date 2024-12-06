@@ -1,9 +1,14 @@
+// Updates user profile information when name, email, or pronouns are updated
 const handleProfileUpdate = (req, res, db) => {
     const { id } = req.params;
-    const { name, age, pet } = req.body.formInput
+    const { name, email, pronouns } = req.body.formInput
     db('users')
         .where({ id })
-        .update({ name })
+        .update({
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(pronouns && { pronouns })
+        })
         .then(resp => {
             if (resp) {
                 res.json("Success")
