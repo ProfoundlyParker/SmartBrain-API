@@ -44,8 +44,9 @@ app.put('/image', requireAuth, (req, res) => { image(req, res, db)});
 app.post('/imageurl', requireAuth, (req, res) => { handleApiCall(req, res)});
 
 // Server port running
-app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
-    console.log(`App is running on port '${process.env.PORT}' || 3001`);
+const port = process.env.PORT || 3000;
+app.listen(port, '0.0.0.0', () => {
+    console.log(`App is running on port '${port}' || 3000`);
 });
 
 
